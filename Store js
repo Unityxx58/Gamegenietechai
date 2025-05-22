@@ -1,0 +1,71 @@
+import React, { useState, useEffect } from "react";
+
+const Store = ({ onGenerate }) => {
+  // Start with 10 free credits or load from localStorage
+  const [credits, setCredits] = useState(() => {
+    const saved = localStorage.getItem("userCredits");
+    return saved ? Number(saved) : 10;
+  });
+
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    localStorage.setItem("userCredits", credits);
+  }, [credits]);
+
+  const handleGenerate = () => {
+    if (credits <= 0) {
+      setMessage("You have no credits left. Please buy more to generate games.");
+      return;
+    }
+    setMessage("");
+    setCredits(credits - 1);
+    onGenerate();
+  };
+
+  const handleBuyCredits = () => {
+    setCredits(credits + 10);
+    setMessage("You bought 10 credits!");
+  };
+
+  return (
+    <div style={{ maxWidth: "400px", margin: "20px auto", textAlign: "center" }}>
+      <h2>Game Generation Store</h2>
+      <p>Credits left: <strong>{credits}</strong></p>
+
+      <button
+        onClick={handleGenerate}
+        disabled={credits <= 0}
+        style={{
+          padding: "10px 20px",
+          fontSize: "16px",
+          cursor: credits > 0 ? "pointer" : "not-allowed",
+          marginBottom: "10px",
+        }}
+      >
+        Generate Game
+      </button>
+
+      <br />
+
+      <button
+        onClick={handleBuyCredits}
+        style={{
+          padding: "8px 16px",
+          fontSize: "14px",
+          cursor: "pointer",
+          backgroundColor: "#4caf50",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+        }}
+      >
+        Buy 10 Credits ($5)
+      </button>
+
+      {message && <p style={{ marginTop: "15px", color: "red" }}>{message}</p>}
+    </div>
+  );
+};
+
+export default Store;
