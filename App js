@@ -1,0 +1,38 @@
+import React, { useState, useEffect } from "react";
+import Layout from "./Layout";
+import Generator from "./Generator";
+import Store from "./Store";
+
+function App() {
+  // Load credits from localStorage or start at 10
+  const [credits, setCredits] = useState(() => {
+    const saved = localStorage.getItem("userCredits");
+    return saved ? Number(saved) : 10;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("userCredits", credits);
+  }, [credits]);
+
+  // Called when user clicks Generate
+  const handleGenerate = (gameIdea) => {
+    setCredits((prev) => prev - 1);
+    alert(`Generating game for idea: "${gameIdea}"`);
+    // TODO: Add your AI generation logic here
+  };
+
+  // Called when user buys credits
+  const handleBuyCredits = () => {
+    setCredits((prev) => prev + 10);
+    alert("You bought 10 credits!");
+  };
+
+  return (
+    <Layout>
+      <Generator credits={credits} onGenerate={handleGenerate} />
+      <Store credits={credits} onBuyCredits={handleBuyCredits} />
+    </Layout>
+  );
+}
+
+export default App;
